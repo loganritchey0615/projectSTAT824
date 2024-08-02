@@ -1,0 +1,109 @@
+---
+title: "Project STAT824"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(plotly)
+library(plyr)
+library(flexdashboard)
+```
+
+MPG plots by Vehicle Class
+================================================================================
+
+column
+--------------------------------------------------------------------------------
+### Performance between Small and Large vehicles
+```{r echo=FALSE}
+mtcars <- mtcars %>%
+  mutate(size = ifelse(wt < median(wt), "Small", "Large"))
+
+# Create a box plot to compare MPG between small and large vehicles
+d<-ggplot(mtcars, aes(x = size, y = mpg, fill = size)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Small" = "skyblue", "Large" = "salmon")) +
+  theme_minimal() +
+  labs(
+    title = "Comparison of MPG Between Small and Large Vehicles",
+    x = "Vehicle Size",
+    y = "Miles Per Gallon (MPG)"
+  )
+ggplotly(d)
+```
+
+row
+------------------------------------------------------------------------------
+### Boxplot with City Mpg by Vehicle Class
+
+```{r boxplot, echo=FALSE}
+b <- ggplot(mpg, aes(x = class, y = cty, fill = class)) +
+  geom_boxplot() +
+  labs(title = "City MPG by Vehicle Class",
+       x = "Vehicle Class",
+       y = "City MPG") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplotly(b)
+```
+
+
+### Boxplot with Highway Mpg by Vehicle Class
+
+```{r boxplox2, echo=FALSE}
+e <- ggplot(mpg, aes(x = class, y = hwy, fill = class)) +
+  geom_boxplot() +
+  labs(title = "Highway MPG by Vehicle Class",
+       x = "Vehicle Class",
+       y = "Hwy MPG") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplotly(e)
+```
+
+
+MPG plots by vehicle specification
+===============================================================================
+
+row
+-------------------------------------------------------------------------------
+
+### Miles per Gallon versus Horsepower and Weight
+```{r echo=FALSE}
+c <- ggplot(mtcars, aes(x = hp, y = mpg, color = factor(cyl), size = wt)) +
+  geom_point(alpha = 0.7) +
+  scale_color_brewer(palette = "Set1") +
+  theme_minimal() +
+  labs(
+    title = "Miles per Gallon vs Horsepower",
+    x = "Horsepower",
+    y = "Miles per Gallon",
+    color = "Number of Cylinders",
+    size = "Weight (1000 lbs)"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+ggplotly(c)
+```
+
+### Scatter plot with Engine Displacement and Highway Mpg
+
+```{r scatterplot, echo=FALSE}
+a <- ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class), size = 3) +
+  labs(title = "Engine Displacement vs. Highway MPG",
+       x = "Engine Displacement (L)",
+       y = "Highway MPG") +
+  theme_minimal()
+ggplotly(a)
+```
+
